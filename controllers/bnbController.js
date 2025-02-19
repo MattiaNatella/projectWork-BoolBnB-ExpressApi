@@ -1,5 +1,15 @@
+import connection from "../data/data.js";
+
 const index = (req, res) => {
-    res.send('Sono la rotta index')
+
+    const sql = 'SELECT * FROM immobili'
+
+    connection.query(sql, (err, result) => {
+        if (err) return res.status(500).json({ error: 'query al database fallita' });
+        console.log(result)
+        res.json(result)
+    })
+
 }
 
 const show = (req, res) => {
