@@ -55,12 +55,10 @@ const store = (req, res) => {
     ],
     (err, results) => {
       if (err) res.status(500).json({ error: "Errore query al database" });
-      res
-        .status(201)
-        .json({
-          status: "success",
-          message: "Immobile aggiunto con succcesso",
-        });
+      res.status(201).json({
+        status: "success",
+        message: "Immobile aggiunto con successo",
+      });
     }
   );
 };
