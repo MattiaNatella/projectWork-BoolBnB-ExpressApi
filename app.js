@@ -3,6 +3,7 @@ import cors from 'cors'
 import 'dotenv/config'
 import notFoundHandler from './assets/middlewares/notFoundHandler.js'
 import errorHandler from './assets/middlewares/errorHandler.js'
+import router from './routers/router.js'
 
 
 const app = express()
@@ -17,7 +18,7 @@ app.use(express.static('public'))
 //Middleware per il parse del body della request
 app.use(express.json())
 
-
+app.use('/immobili', router)
 
 //definisco un entrypoint per il server
 app.get('/', (req, res) => {
