@@ -6,8 +6,11 @@ const router = express.Router()
 //INDEX
 router.get('/', bnbController.index)
 
-// //SHOW
+// SHOW
 router.get('/:id', bnbController.show)
+
+// STORE
+router.post('/', bnbController.store)
 
 
 export default router

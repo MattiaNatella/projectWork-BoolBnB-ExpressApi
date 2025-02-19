@@ -7,8 +7,14 @@ const show = (req, res) => {
     res.send(`Sono la rotta show: ${id}`)
 }
 
+const store = (req, res) => {
+    console.log(req.body)
+    res.json(req.body)
+}
+
 
 export default {
     index,
-    show
+    show,
+    store
 }
