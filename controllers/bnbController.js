@@ -28,8 +28,16 @@ const show = (req, res) => {
 }
 
 const store = (req, res) => {
-    console.log(req.body)
-    res.json(req.body)
+
+    const { descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voti, proprietario_id } = req.body
+
+    const sql = "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voti, proprietario_id) VALUES (?,?,?,?,?,?,?,?,?,?)"
+
+    connection.query(sql, [descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voti, proprietario_id], (err, results) => {
+        if (err) res.status(500).json({ error: 'Errore query al database' });
+        res.status(201).json({ status: 'success', message: 'Immobile aggiunto con succcesso' })
+    })
+
 }
 
 

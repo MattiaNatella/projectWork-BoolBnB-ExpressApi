@@ -12,11 +12,11 @@ router.get('/:id', bnbController.show)
 // STORE
 router.post('/', bnbController.store)
 
-// STORE REVIEWS
-router.post('/', bnbController.storeCuoricini)
+// // STORE REVIEWS
+// router.post('/', bnbController.storeCuoricini)
 
-// UPDATE CUORICINI
-router.update('/', bnbController.store)
+// // UPDATE CUORICINI
+// router.update('/', bnbController.store)
 
 
 
