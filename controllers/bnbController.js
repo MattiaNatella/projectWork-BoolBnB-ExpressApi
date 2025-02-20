@@ -17,7 +17,7 @@ const show = (req, res) => {
     const sql = 'SELECT * FROM immobili WHERE id = ?'
 
     connection.query(sql, [id], (err, results) => {
-        if (err) res.status(500).json({ error: 'query al database fallita' });
+        if (err) res.status(500).json({ error: err });
         if (results.length == 0 || results[id] === null) res.status(404).json({ error: 'Immobile non trovato' });
 
         res.json(results[0])
