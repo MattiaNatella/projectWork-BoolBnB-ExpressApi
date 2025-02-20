@@ -17,7 +17,7 @@ const show = (req, res) => {
     const sql = 'SELECT * FROM immobili WHERE id = ?'
 
     connection.query(sql, [id], (err, results) => {
-        if (err) res.status(500).json({ error: 'query al database fallita' });
+        if (err) res.status(500).json({ error: err });
         if (results.length == 0 || results[id] === null) res.status(404).json({ error: 'Immobile non trovato' });
 
         res.json(results[0])
@@ -48,7 +48,7 @@ const storeReview = (req, res) => {
     const sql = 'INSERT INTO recensioni (immobile_id, username, testo, gg_permanenza) VALUES (?,?,?,?);'
 
     connection.query(sql, [id, username, testo, gg_permanenza], (err, results) => {
-        if (err) res.status(500).json({ error: 'Errore query al database' })
+        if (err) res.status(500).json({ error: err })
         res.status(201).json({ status: 'Success', message: 'Recensione inserita correttamente', id: results.insertId })
         console.log(results)
     })
@@ -60,7 +60,7 @@ const modifyVote = (req, res) => {
     const sql = 'UPDATE immobili SET voto = voto + 1 WHERE id = ?;'
 
     connection.query(sql, [id], (err, results) => {
-        if (err) res.status(500).json({ error: 'Errore aggiornamento cuoricini' })
+        if (err) res.status(500).json({ error: err })
         res.status(200).json({ status: 'Success', message: 'Cuoricino aggiunto!', affectedRows: results.affectedRows })
         console.log(results)
     })
