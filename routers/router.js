@@ -15,8 +15,9 @@ router.post('/', bnbController.store)
 //STORE REVIEW
 router.post('/:id/recensioni', bnbController.storeReview)
 
-// // UPDATE CUORICINI
-// router.update('/', bnbController.store)
+// UPDATE CUORICINI
+router.patch('/:id/cuoricini', bnbController.modifyVote)
+
 
 
 

@@ -52,13 +52,25 @@ const storeReview = (req, res) => {
         res.status(201).json({ status: 'Success', message: 'Recensione inserita correttamente', id: results.insertId })
         console.log(results)
     })
-
 }
 
+const modifyVote = (req, res) => {
+    const id = req.params.id
+
+    const sql = 'UPDATE immobili SET voto = voto + 1 WHERE id = ?;'
+
+    connection.query(sql, [id], (err, results) => {
+        if (err) res.status(500).json({ error: 'Errore aggiornamento cuoricini' })
+        res.status(200).json({ status: 'Success', message: 'Cuoricino aggiunto!', affectedRows: results.affectedRows })
+        console.log(results)
+    })
+
+}
 
 export default {
     index,
     show,
     store,
-    storeReview
+    storeReview,
+    modifyVote
 }
