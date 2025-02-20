@@ -12,8 +12,8 @@ router.get('/:id', bnbController.show)
 // STORE
 router.post('/', bnbController.store)
 
-// // STORE REVIEWS
-// router.post('/', bnbController.storeCuoricini)
+//STORE REVIEW
+router.post('/:id/recensioni', bnbController.storeReview)
 
 // // UPDATE CUORICINI
 // router.update('/', bnbController.store)

@@ -41,8 +41,24 @@ const store = (req, res) => {
 }
 
 
+const storeReview = (req, res) => {
+    const id = req.params.id
+    const { username, testo, gg_permanenza } = req.body
+
+    const sql = 'INSERT INTO recensioni (immobile_id, username, testo, gg_permanenza) VALUES (?,?,?,?);'
+
+    connection.query(sql, [id, username, testo, gg_permanenza], (err, results) => {
+        if (err) res.status(500).json({ error: 'Errore query al database' })
+        res.status(201).json({ status: 'Success', message: 'Recensione inserita correttamente', id: results.insertId })
+        console.log(results)
+    })
+
+}
+
+
 export default {
     index,
     show,
-    store
+    store,
+    storeReview
 }
