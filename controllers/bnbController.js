@@ -99,28 +99,7 @@ const store = (req, res) => {
     );
 };
 
-connection.query(
-    sql,
-    [
-        descrizione_immobile,
-        stanze,
-        bagni,
-        letti,
-        metri_quadrati,
-        indirizzo,
-        immagine,
-        tipologia,
-        voti,
-        proprietario_id,
-    ],
-    (err, results) => {
-        if (err) res.status(500).json({ error: "Errore query al database" });
-        res.status(201).json({
-            status: "success",
-            message: "Immobile aggiunto con successo",
-        });
-    }
-);
+
 
 const storeReview = (req, res) => {
     const id = req.params.id;
