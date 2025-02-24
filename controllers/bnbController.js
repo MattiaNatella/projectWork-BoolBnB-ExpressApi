@@ -10,7 +10,7 @@ const validateProperty = (data) => {
         metri_quadrati,
         indirizzo,
         immagine,
-        tipologia,
+        tipologia_id,
         proprietario_id,
     } = data;
 
@@ -37,10 +37,55 @@ const index = (req, res) => {
     const sql = "SELECT * FROM immobili";
 
     connection.query(sql, (err, results) => {
-        if (err) res.status(500).json({ error: "query al database fallita" });
+        if (err) res.status(500).json({ error: "query al database fallita"});
         res.json(results);
     });
 };
+
+const filterIndex = (req,res) => {
+    let {tipologia_id, indirizzo, voto_min, stanze_min, bagni_min, letti_min} = req.query;
+    let sql = "SELECT * FROM immobili WHERE 1=1";
+    let params = [];
+    console.log("Valore di indirizzo ricevuto:", indirizzo);
+
+
+    if(tipologia_id) {
+        sql += " AND tipologia_id = ? " ;
+        params.push(tipologia_id);
+    }
+    if (indirizzo) {
+        sql += " AND SUBSTRING_INDEX(indirizzo, ', ', -1) LIKE ? ";
+        params.push(`%${indirizzo}%`);
+    }
+    
+    if(voto_min) {
+        sql += " AND voto >=? "
+        params.push(voto_min);
+    }
+    if (stanze_min) {
+        sql += " AND stanze >= ? ";
+        params.push(stanze_min);
+    }
+    if (bagni_min) {
+        sql += " AND bagni >= ? ";
+        params.push(bagni_min);
+    }
+    if (letti_min) {
+        sql += " AND letti >= ? ";
+        params.push(letti_min);
+    }
+
+    sql += " ORDER BY voto DESC";
+
+    console.log("SQL generato:", sql);
+    console.log("Parametri:", params);
+
+    connection.query(sql, params, (err, results) => {
+        if (err) return res.status(500).json({ error: err});
+        res.json(results);
+    });
+};
+
 
 const show = (req, res) => {
     const id = req.params.id;
@@ -67,13 +112,13 @@ const store = (req, res) => {
         metri_quadrati,
         indirizzo,
         immagine,
-        tipologia_id,
+        tipologia,
         voto,
         proprietario_id,
     } = req.body;
 
     const sql =
-        "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, proprietario_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
+        "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voto, proprietario_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
     connection.query(
         sql,
@@ -85,7 +130,7 @@ const store = (req, res) => {
             metri_quadrati,
             indirizzo,
             immagine,
-            tipologia_id,
+            tipologia,
             voto,
             proprietario_id,
         ],
@@ -153,8 +198,10 @@ const modifyVote = (req, res) => {
 
 export default {
     index,
+    filterIndex,
     show,
     store,
     storeReview,
     modifyVote,
+    
 };

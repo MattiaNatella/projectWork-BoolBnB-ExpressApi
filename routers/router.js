@@ -6,6 +6,9 @@ const router = express.Router()
 //INDEX
 router.get('/', bnbController.index)
 
+//INDEX FILTRATO
+router.get('/filtra',bnbController.filterIndex)
+
 // SHOW
 router.get('/:id', bnbController.show)
 
