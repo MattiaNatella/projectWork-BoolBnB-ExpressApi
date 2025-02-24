@@ -3,7 +3,7 @@ import connection from "../data/data.js";
 const validateProperty = (data) => {
     const errors = [];
     const { descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, proprietario_id } = data;
-    
+
     if (!descrizione_immobile || descrizione_immobile.trim() === "") errors.push("Descrizione immobile obbligatoria");
     if (!indirizzo || indirizzo.trim() === "") errors.push("Indirizzo obbligatorio");
     if (stanze <= 0 || isNaN(stanze)) errors.push("Numero di stanze non valido");
@@ -12,11 +12,9 @@ const validateProperty = (data) => {
     if (metri_quadrati <= 0 || isNaN(metri_quadrati)) errors.push("Superficie non valida");
     if (immagine && !/^\w+\.(jpg|jpeg|png|webp|gif)$/i.test(immagine)) errors.push("URL immagine non valido");
     if (!proprietario_id || isNaN(proprietario_id)) errors.push("ID proprietario non valido");
-    
+
     return errors;
 };
-
-
 
 const index = (req, res) => {
 
@@ -41,11 +39,10 @@ const show = (req, res) => {
         res.json(results[0])
 
     })
-
-
 }
 
 const store = (req, res) => {
+
     const errors = validateProperty(req.body);
     if (errors.length > 0) return res.status(400).json({ error: errors });
 
@@ -54,7 +51,7 @@ const store = (req, res) => {
     const sql = "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voto, proprietario_id) VALUES (?,?,?,?,?,?,?,?,?,?)"
 
     connection.query(sql, [descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voto, proprietario_id], (err, results) => {
-        if (err) return res.status(500).json({ error: err });
+        if (err) res.status(500).json({ error: err });
         res.status(201).json({ status: 'success', message: 'Immobile aggiunto con succcesso' })
     })
 
@@ -64,6 +61,7 @@ const store = (req, res) => {
 const storeReview = (req, res) => {
     const id = req.params.id
     const { username, testo, gg_permanenza } = req.body
+
     if (!username || username.trim() === "") return res.status(400).json({ error: "Username obbligatorio" });
     if (!testo || testo.trim() === "") return res.status(400).json({ error: "Testo della recensione obbligatorio" });
     if (gg_permanenza <= 0 || isNaN(gg_permanenza)) return res.status(400).json({ error: "Numero giorni permanenza non valido" });
@@ -71,7 +69,7 @@ const storeReview = (req, res) => {
     const sql = 'INSERT INTO recensioni (immobile_id, username, testo, gg_permanenza) VALUES (?,?,?,?);'
 
     connection.query(sql, [id, username, testo, gg_permanenza], (err, results) => {
-        if (err) return res.status(500).json({ error: err })
+        if (err) res.status(500).json({ error: err })
         res.status(201).json({ status: 'Success', message: 'Recensione inserita correttamente', id: results.insertId })
         console.log(results)
     })
