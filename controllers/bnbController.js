@@ -1,37 +1,37 @@
 import connection from "../data/data.js";
 
-const validateProperty = (data) => {
-    const errors = [];
-    const {
-        descrizione_immobile,
-        stanze,
-        bagni,
-        letti,
-        metri_quadrati,
-        indirizzo,
-        immagine,
-        tipologia_id,
-        proprietario_id,
-    } = data;
+// const validateProperty = (data) => {
+//     const errors = [];
+//     const {
+//         descrizione_immobile,
+//         stanze,
+//         bagni,
+//         letti,
+//         metri_quadrati,
+//         indirizzo,
+//         immagine,
+//         tipologia_id,
+//         proprietario_id,
+//     } = data;
 
 
-    //autenticazione dei dati
-    if (!descrizione_immobile || descrizione_immobile.trim() === "")
-        errors.push("Descrizione immobile obbligatoria");
-    if (!indirizzo || indirizzo.trim() === "")
-        errors.push("Indirizzo obbligatorio");
-    if (stanze <= 0 || isNaN(stanze)) errors.push("Numero di stanze non valido");
-    if (bagni <= 0 || isNaN(bagni)) errors.push("Numero di bagni non valido");
-    if (letti <= 0 || isNaN(letti)) errors.push("Numero di letti non valido");
-    if (metri_quadrati <= 0 || isNaN(metri_quadrati))
-        errors.push("Superficie non valida");
-    if (immagine && !/^\w+\.(jpg|jpeg|png|webp|gif)$/i.test(immagine))
-        errors.push("URL immagine non valido");
-    if (!proprietario_id || isNaN(proprietario_id))
-        errors.push("ID proprietario non valido");
+//     //autenticazione dei dati
+//     if (!descrizione_immobile || descrizione_immobile.trim() === "")
+//         errors.push("Descrizione immobile obbligatoria");
+//     if (!indirizzo || indirizzo.trim() === "")
+//         errors.push("Indirizzo obbligatorio");
+//     if (stanze <= 0 || isNaN(stanze)) errors.push("Numero di stanze non valido");
+//     if (bagni <= 0 || isNaN(bagni)) errors.push("Numero di bagni non valido");
+//     if (letti <= 0 || isNaN(letti)) errors.push("Numero di letti non valido");
+//     if (metri_quadrati <= 0 || isNaN(metri_quadrati))
+//         errors.push("Superficie non valida");
+//     if (immagine && !/^\w+\.(jpg|jpeg|png|webp|gif)$/i.test(immagine))
+//         errors.push("URL immagine non valido");
+//     if (!proprietario_id || isNaN(proprietario_id))
+//         errors.push("ID proprietario non valido");
 
-    return errors;
-};
+//     return errors;
+// };
 
 const index = (req, res) => {
     const sql = "SELECT * FROM immobili";
@@ -102,8 +102,8 @@ const show = (req, res) => {
 };
 
 const store = (req, res) => {
-    const errors = validateProperty(req.body);
-    if (errors.length > 0) return res.status(400).json({ error: errors });
+    // const errors = validateProperty(req.body);
+    // if (errors.length > 0) return res.status(400).json({ error: errors });
 
     const {
         descrizione_immobile,
@@ -113,36 +113,66 @@ const store = (req, res) => {
         metri_quadrati,
         indirizzo,
         immagine,
-        tipologia,
-        voto,
-        proprietario_id,
+        tipologia_id,
+        voto
     } = req.body;
 
-    const sql =
-        "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voto, proprietario_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    const {
+        nome,
+        cognome,
+        email,
+        telefono
+    } = req.body.proprietario
 
-    connection.query(
-        sql,
-        [
-            descrizione_immobile,
-            stanze,
-            bagni,
-            letti,
-            metri_quadrati,
-            indirizzo,
-            immagine,
-            tipologia,
-            voto,
-            proprietario_id,
-        ],
-        (err, results) => {
-            if (err) res.status(500).json({ error: err });
-            res.status(201).json({
-                status: "success",
-                message: "Immobile aggiunto con succcesso",
-            });
+    const SQLcheckProprietario = "SELECT id FROM proprietari WHERE email = ?"
+    connection.query(SQLcheckProprietario, [email], (err,results) =>{
+        if(err) return res.status(500).json({error:err});
+        console.log(results[0]);
+
+        if(results.length === 0){
+            const SQLinsertProprietario = "INSERT INTO proprietari (nome, cognome, email,telefono) VALUES (?, ?, ?, ?)"
+
+            connection.query(SQLinsertProprietario, [nome,cognome,email,telefono], (err,results) =>{
+                if(err) return res.status(500).json({error:err});
+            })
+
+            const SQLinsertImmobile = "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, proprietario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, LAST_INSERT_ID());"
+
+            connection.query(SQLinsertImmobile, [descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto], (err,results) =>{
+                if(err) return res.status(500).json({error:err});
+                return res.status(201).json({message: "immobile e proprietario inseriti con successo"})
+            })
         }
-    );
+
+    })
+
+
+
+    // const sql =
+    //     "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voto, proprietario_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
+
+    // connection.query(
+    //     sql,
+    //     [
+    //         descrizione_immobile,
+    //         stanze,
+    //         bagni,
+    //         letti,
+    //         metri_quadrati,
+    //         indirizzo,
+    //         immagine,
+    //         tipologia,
+    //         voto,
+    //         proprietario_id,
+    //     ],
+    //     (err, results) => {
+    //         if (err) res.status(500).json({ error: err });
+    //         res.status(201).json({
+    //             status: "success",
+    //             message: "Immobile aggiunto con succcesso",
+    //         });
+    //     }
+    // );
 };
 
 
