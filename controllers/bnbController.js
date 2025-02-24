@@ -55,7 +55,7 @@ const filterIndex = (req,res) => {
     }
     if (indirizzo) {
         sql += " AND SUBSTRING_INDEX(indirizzo, ', ', -1) LIKE ? ";
-        params.push(`%${indirizzo}%`);
+        params.push(`%${indirizzo}`);
     }
     
     if(voto_min) {
@@ -82,6 +82,7 @@ const filterIndex = (req,res) => {
 
     connection.query(sql, params, (err, results) => {
         if (err) return res.status(500).json({ error: err});
+        if (results.length == 0) return res.status(404).json({message: 'Non ci sono immobili disponibili'})
         res.json(results);
     });
 };
