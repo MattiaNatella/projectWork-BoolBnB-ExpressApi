@@ -7,7 +7,7 @@ import router from './routers/router.js'
 
 
 const app = express()
-const port = process.env.PORT || 3000 || 3001 || 3002;
+const port = process.env.PORT || 3001;
 
 //definisco i client autorizzati all'accesso
 app.use(cors())
@@ -23,6 +23,7 @@ app.use('/immobili', router)
 //definisco un entrypoint per il server
 app.get('/', (req, res) => {
     res.send('Indirizzo del server BoolBnB')
+
 })
 
 
@@ -36,6 +37,7 @@ app.use(notFoundHandler)
 
 app.listen(port, () => {
     console.log(`sono in ascolto sulla porta ${port} `)
+
 })
 
 

@@ -67,13 +67,13 @@ const store = (req, res) => {
         metri_quadrati,
         indirizzo,
         immagine,
-        tipologia,
+        tipologia_id,
         voto,
         proprietario_id,
     } = req.body;
 
     const sql =
-        "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia, voto, proprietario_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
+        "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, proprietario_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
     connection.query(
         sql,
@@ -85,7 +85,7 @@ const store = (req, res) => {
             metri_quadrati,
             indirizzo,
             immagine,
-            tipologia,
+            tipologia_id,
             voto,
             proprietario_id,
         ],
@@ -99,28 +99,6 @@ const store = (req, res) => {
     );
 };
 
-connection.query(
-    sql,
-    [
-        descrizione_immobile,
-        stanze,
-        bagni,
-        letti,
-        metri_quadrati,
-        indirizzo,
-        immagine,
-        tipologia,
-        voti,
-        proprietario_id,
-    ],
-    (err, results) => {
-        if (err) res.status(500).json({ error: "Errore query al database" });
-        res.status(201).json({
-            status: "success",
-            message: "Immobile aggiunto con successo",
-        });
-    }
-);
 
 const storeReview = (req, res) => {
     const id = req.params.id;
