@@ -97,7 +97,13 @@ const filterIndex = (req, res) => {
     connection.query(sql, params, (err, results) => {
         if (err) return res.status(500).json({ error: err });
         if (results.length == 0) return res.status(404).json({ message: 'Non ci sono immobili disponibili' })
-        res.json(results);
+        const filteredImmobili = results.map(immobile => {
+            return {
+                ...immobile,
+                immagine: req.imagePath + immobile.immagine
+            }
+        })
+        res.json(filteredImmobili);
     });
 };
 
