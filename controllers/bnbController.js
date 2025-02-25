@@ -110,19 +110,44 @@ const filterIndex = (req, res) => {
 
 const show = (req, res) => {
     const id = req.params.id;
-    const sql = "SELECT * FROM immobili WHERE id = ?";
+    const sql = `SELECT I.*,R.id id_recensione, R.username, R.testo, R.data_creazione, R.gg_permanenza, R.valutazione
+    FROM immobili I
+    LEFT JOIN recensioni R ON I.id = R.immobile_id
+    WHERE I.id = ?;`
 
     connection.query(sql, [id], (err, results) => {
         if (err) res.status(500).json({ error: err });
         if (results.length == 0 || results[id] === null)
             res.status(404).json({ error: "Immobile non trovato" });
 
-        const showImmobile = {
-            ...results[0],
-            immagine: req.imagePath + results[0].immagine
+        const immobileObj = {
+            id: results[0].id,
+            proprietaro_id: results[0].proprietaro_id,
+            descrizione_immobile: results[0].descrizione_immobile,
+            stanze: results[0].stanze,
+            bagni: results[0].bagni,
+            letti: results[0].letti,
+            metri_quadrati: results[0].metri_quadrati,
+            immagine: req.imagePath + results[0].immagine,
+            indirizzo: results[0].indirizzo,
+            voto: results[0].voto,
+            data_inserimento: results[0].data_inserimento,
+            tipologia_id: results[0].tipologia_id,
+            reviews: []
         }
+        console.log(results)
+        results.forEach(item => {
+            immobileObj.reviews.push({
+                id: item.id_recensione,
+                username: item.username,
+                testo: item.testo,
+                data_creazione: item.data_creazione,
+                gg_permanenza: item.gg_permanenza,
+                valutazione: item.valutazione
+            })
+        })
 
-        res.json(showImmobile);
+        res.json(immobileObj)
     });
 };
 
