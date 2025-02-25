@@ -56,6 +56,15 @@ const index = (req, res) => {
     });
 };
 
+const tipologieIndex = (req,res) => {
+    const sql = "SELECT * FROM tipologie";
+    
+    connection.query(sql, (err,results) => {
+        if(err) res.status(500).json({error: err})
+        return res.json(results)
+    })
+}
+
 const filterIndex = (req, res) => {
     let { tipologia_id, indirizzo, voto_min, stanze_min, bagni_min, letti_min } = req.query;
     let sql = "SELECT * FROM immobili WHERE 1=1";
@@ -262,5 +271,6 @@ export default {
     store,
     storeReview,
     modifyVote,
+    tipologieIndex
 
 };
