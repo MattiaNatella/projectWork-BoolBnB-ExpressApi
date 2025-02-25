@@ -1,5 +1,6 @@
 import express from 'express'
 import bnbController from '../controllers/bnbController.js'
+import upload from '../assets/middlewares/multer.js'
 
 const router = express.Router()
 
@@ -7,13 +8,13 @@ const router = express.Router()
 router.get('/', bnbController.index)
 
 //INDEX FILTRATO
-router.get('/filtra',bnbController.filterIndex)
+router.get('/filtra', bnbController.filterIndex)
 
 // SHOW
 router.get('/:id', bnbController.show)
 
 // STORE
-router.post('/', bnbController.store)
+router.post('/', upload.single('immagine'), bnbController.store)
 
 //STORE REVIEW
 router.post('/:id/recensioni', bnbController.storeReview)

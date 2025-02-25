@@ -4,6 +4,7 @@ import 'dotenv/config'
 import notFoundHandler from './assets/middlewares/notFoundHandler.js'
 import errorHandler from './assets/middlewares/errorHandler.js'
 import router from './routers/router.js'
+import setImagePath from './assets/middlewares/setImagePath.js'
 
 
 const app = express()
@@ -18,7 +19,8 @@ app.use(express.static('public'))
 //Middleware per il parse del body della request
 app.use(express.json())
 
-app.use('/immobili', router)
+//middleware gestione percorso dinamico immagini
+app.use(setImagePath)
 
 //definisco un entrypoint per il server
 app.get('/', (req, res) => {
@@ -26,7 +28,8 @@ app.get('/', (req, res) => {
 
 })
 
-
+//rotta per gli immobili
+app.use('/immobili', router)
 
 //Middleware gestione errori
 app.use(errorHandler)
