@@ -77,8 +77,13 @@ const filterIndex = (req, res) => {
         params.push(tipologia_id);
     }
     if (indirizzo) {
-        sql += " AND (SUBSTRING_INDEX(indirizzo, ', ', -1) = ? OR SUBSTRING_INDEX(indirizzo, ', ', 1) LIKE ?) ";
-        params.push(indirizzo, `${indirizzo}%`);
+        sql += `
+            AND (
+                indirizzo = ? 
+                OR SUBSTRING_INDEX(indirizzo, ', ', -1) = ? 
+                OR SUBSTRING_INDEX(indirizzo, ', ', 1) LIKE ? 
+            )`;
+        params.push(indirizzo, indirizzo, `${indirizzo}%`);
     }
 
     if (voto_min) {
