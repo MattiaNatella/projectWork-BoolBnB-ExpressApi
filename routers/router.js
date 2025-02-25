@@ -10,6 +10,9 @@ router.get('/', bnbController.index)
 //INDEX FILTRATO
 router.get('/filtra', bnbController.filterIndex)
 
+//INDEX TIPOLOGIE
+router.get('/tipologie',bnbController.tipologieIndex)
+
 // SHOW
 router.get('/:id', bnbController.show)
 
@@ -21,6 +24,7 @@ router.post('/:id/recensioni', bnbController.storeReview)
 
 // UPDATE CUORICINI
 router.patch('/:id/cuoricini', bnbController.modifyVote)
+
 
 
 
