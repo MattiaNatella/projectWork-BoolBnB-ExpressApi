@@ -111,7 +111,12 @@ const show = (req, res) => {
         if (results.length == 0 || results[id] === null)
             res.status(404).json({ error: "Immobile non trovato" });
 
-        res.json(results[0]);
+        const showImmobile = {
+            ...results[0],
+            immagine: req.imagePath + results[0].immagine
+        }
+
+        res.json(showImmobile);
     });
 };
 
