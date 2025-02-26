@@ -74,7 +74,7 @@ const validateSearchParams = (query) =>{
 
 // --INDEX--
 const index = (req, res) => {
-    const sql = "SELECT * FROM immobili";
+    const sql = "SELECT * FROM immobili ORDER BY voto DESC";
 
     connection.query(sql, (err, results) => {
         if (err) res.status(500).json({ error: "query al database fallita" });
