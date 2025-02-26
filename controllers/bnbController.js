@@ -107,7 +107,8 @@ const filterIndex = (req, res) => {
     const errors = validateSearchParams(req.query);
     if (errors.length > 0 ) return res.status(400).json({error:errors});
 
-    let sql = "SELECT * FROM immobili WHERE 1=1";
+    let sql = "SELECT immobili.*, COUNT(recensioni.id) AS num_recensioni FROM immobili LEFT JOIN recensioni ON immobili.id = recensioni.immobile_id WHERE 1=1";
+
     let params = [];
     console.log("Valore di indirizzo ricevuto:", indirizzo);
 
@@ -143,7 +144,7 @@ const filterIndex = (req, res) => {
         params.push(letti_min);
     }
 
-    sql += " ORDER BY voto DESC";
+    sql += " GROUP BY immobili.id ORDER BY voto DESC";
 
     console.log("SQL generato:", sql);
     console.log("Parametri:", params);
