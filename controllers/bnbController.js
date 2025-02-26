@@ -2,12 +2,15 @@ import connection from "../data/data.js";
 import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url';
+import { error } from "console";
 
 
 // Ottieni il percorso del file corrente
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+// funzione per validazione dei dati
 const validateProperty = (data) => {
     const errors = [];
     const {
@@ -19,6 +22,7 @@ const validateProperty = (data) => {
         indirizzo,
         immagine,
         tipologia_id,
+        proprietario
     } = data;
 
 
@@ -37,9 +41,38 @@ const validateProperty = (data) => {
     if (!tipologia_id || isNaN(tipologia_id))
         errors.push("tipologia non valida");
 
+    if(!proprietario) {
+        errors.push("Dati proprietario mancancanti");    
+    } else {
+        const {nome, cognome,email} = proprietario;
+
+        if(!nome || nome.trim() === "") errors.push ("Nome del proprietario obbligatorio");
+        if(!cognome || cognome.trim() ===  "") errors.push ("Cognome del proprietario obbligatorio");
+        if (!email || !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) errors.push("Email del proprietario non valida");     
+    }
+
     return errors;
 };
 
+
+const validateSearchParams = (query) =>{
+    const errors = [];
+    if(query.tipologia_id && isNaN(query.tipologia_id))
+        errors.push("Tipologia non valida")
+    if(query.voto_min && (isNaN(query.voto_min) || query.voto_min < 0 ))
+        errors.push("Voto minimo non valido")
+    if(query.stanze_min && (isNaN(query.stanze_min) || query.stanze_min < 0))
+        errors.push("Numero minimo di stanze non valido")
+    if(query.letti_min && (isNaN(query.letti_min) || query.letti_min < 0))
+        errors.push("Numero minimo di letti non valido")
+    if(query.bagni_min && (isNaN(query.bagni_min) || query.bagni_min < 0))
+        errors.push("Numero minimo di bagno non valido")
+    
+    return errors
+
+}
+
+// --INDEX--
 const index = (req, res) => {
     const sql = "SELECT * FROM immobili";
 
@@ -56,6 +89,7 @@ const index = (req, res) => {
     });
 };
 
+// --TIPOLOGIE INDEX--
 const tipologieIndex = (req,res) => {
     const sql = "SELECT * FROM tipologie";
     
@@ -65,8 +99,14 @@ const tipologieIndex = (req,res) => {
     })
 }
 
+//-- INDEX FILTRATO--
+
 const filterIndex = (req, res) => {
     let { tipologia_id, indirizzo, voto_min, stanze_min, bagni_min, letti_min } = req.query;
+
+    const errors = validateSearchParams(req.query);
+    if (errors.length > 0 ) return res.status(400).json({error:errors});
+
     let sql = "SELECT * FROM immobili WHERE 1=1";
     let params = [];
     console.log("Valore di indirizzo ricevuto:", indirizzo);
@@ -121,7 +161,7 @@ const filterIndex = (req, res) => {
     });
 };
 
-
+// -- SHOW --
 const show = (req, res) => {
     const id = req.params.id;
     const sql = `SELECT I.*,R.id id_recensione, R.username, R.testo, R.data_creazione, R.gg_permanenza, R.valutazione
@@ -165,6 +205,7 @@ const show = (req, res) => {
     });
 };
 
+// -- STORE --
 const store = (req, res) => {
     const errors = validateProperty(req.body);
     if (errors.length > 0) return res.status(400).json({ error: errors });
@@ -191,21 +232,24 @@ const store = (req, res) => {
         telefono
     } = req.body.proprietario
 
+    // check esistenza proprietario
     const SQLcheckProprietario = "SELECT id FROM proprietari WHERE email = ?"
     connection.query(SQLcheckProprietario, [email], (err, results) => {
         if (err) return res.status(500).json({ error: err });
         console.log(results[0]);
 
+        // se il proprietario non esiste viene inserito
         if (results.length === 0) {
             const SQLinsertProprietario = "INSERT INTO proprietari (nome, cognome, email,telefono) VALUES (?, ?, ?, ?)"
 
             connection.query(SQLinsertProprietario, [nome, cognome, email, telefono], (err, results) => {
                 if (err) return res.status(500).json({ error: err });
             })
+            
+            // inserito il proprietario viene poi inserito l'immobile
+            const SQLinsertImmobile = "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, proprietario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, LAST_INSERT_ID());"
 
-            const SQLinsertImmobile = "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, proprietario_id, immagine) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, LAST_INSERT_ID());"
-
-            connection.query(SQLinsertImmobile, [descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, imageName], (err, results) => {
+            connection.query(SQLinsertImmobile, [descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, imageName, tipologia_id, voto], (err, results) => {
                 if (err) return res.status(500).json({ error: err });
                 return res.status(201).json({ message: "immobile e proprietario inseriti con successo" })
             })
@@ -216,7 +260,7 @@ const store = (req, res) => {
 
 };
 
-
+// -- STORE RECENSIONI --
 const storeReview = (req, res) => {
     const id = req.params.id;
     const { username, testo, gg_permanenza, valutazione } = req.body;
@@ -253,6 +297,7 @@ const storeReview = (req, res) => {
     );
 };
 
+// --UPDATE CUORICINI--
 const modifyVote = (req, res) => {
     const id = req.params.id;
 
