@@ -179,6 +179,7 @@ const show = (req, res) => {
             id: results[0].id,
             proprietaro_id: results[0].proprietaro_id,
             descrizione_immobile: results[0].descrizione_immobile,
+            testo_descrittivo: results[0].testo_descrittivo,
             stanze: results[0].stanze,
             bagni: results[0].bagni,
             letti: results[0].letti,
@@ -212,10 +213,11 @@ const store = (req, res) => {
     if (errors.length > 0) return res.status(400).json({ error: errors });
 
     //nome del file che è stato uploadato per l'immagine
-    const imageName = req.file.filename
+    // const imageName = req.file.filename
 
     const {
         descrizione_immobile,
+        testo_descrittivo,
         stanze,
         bagni,
         letti,
@@ -248,9 +250,9 @@ const store = (req, res) => {
             })
             
             // inserito il proprietario viene poi inserito l'immobile
-            const SQLinsertImmobile = "INSERT INTO immobili (descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, proprietario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, LAST_INSERT_ID());"
+            const SQLinsertImmobile = "INSERT INTO immobili (descrizione_immobile, testo_descrittivo, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, proprietario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, LAST_INSERT_ID());"
 
-            connection.query(SQLinsertImmobile, [descrizione_immobile, stanze, bagni, letti, metri_quadrati, indirizzo, imageName, tipologia_id, voto], (err, results) => {
+            connection.query(SQLinsertImmobile, [descrizione_immobile, testo_descrittivo, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto], (err, results) => {
                 if (err) return res.status(500).json({ error: err });
                 return res.status(201).json({ message: "immobile e proprietario inseriti con successo" })
             })
