@@ -74,7 +74,7 @@ const validateSearchParams = (query) =>{
 
 // --INDEX--
 const index = (req, res) => {
-    const sql = "SELECT immobili.*, COUNT(recensioni.id) AS num_recensioni FROM immobili LEFT JOIN recensioni ON immobili.id = recensioni.immobile_id GROUP BY immobili.id ORDER BY voto DESC;";
+    const sql = "SELECT immobili.*, COUNT(recensioni.id) AS num_recensioni FROM immobili LEFT JOIN recensioni ON immobili.id = recensioni.immobile_id GROUP BY immobili.id ORDER BY voto DESC LIMIT 3;";
 
     connection.query(sql, (err, results) => {
         if (err) res.status(500).json({ error: "query al database fallita" });
