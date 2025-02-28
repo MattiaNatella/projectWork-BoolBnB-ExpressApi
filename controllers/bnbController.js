@@ -165,10 +165,26 @@ const filterIndex = (req, res) => {
 // -- SHOW --
 const show = (req, res) => {
     const id = req.params.id;
-    const sql = `SELECT I.*,R.id id_recensione, R.username, R.testo, R.data_creazione, R.gg_permanenza, R.valutazione
-    FROM immobili I
-    LEFT JOIN recensioni R ON I.id = R.immobile_id
-    WHERE I.id = ?;`
+    const sql = `SELECT 
+    I.*,
+    R.id AS id_recensione,
+    R.username,
+    R.testo,
+    R.data_creazione,
+    R.gg_permanenza,
+    R.valutazione,
+    IFNULL((SELECT ROUND(AVG(valutazione)) 
+            FROM recensioni 
+            WHERE immobile_id = I.id), 0) AS media_valutazione
+FROM 
+    immobili I
+LEFT JOIN 
+    recensioni R 
+ON 
+    I.id = R.immobile_id
+WHERE 
+    I.id = ?;
+`;
 
     connection.query(sql, [id], (err, results) => {
         if (err) res.status(500).json({ error: err });
@@ -188,6 +204,7 @@ const show = (req, res) => {
             indirizzo: results[0].indirizzo,
             prezzo_notte: results[0].prezzo_notte,
             voto: results[0].voto,
+            media_valutazione: results[0].media_valutazione,
             data_inserimento: results[0].data_inserimento,
             tipologia_id: results[0].tipologia_id,
             reviews: []
