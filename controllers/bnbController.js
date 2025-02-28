@@ -186,6 +186,7 @@ const show = (req, res) => {
             metri_quadrati: results[0].metri_quadrati,
             immagine: req.imagePath + results[0].immagine,
             indirizzo: results[0].indirizzo,
+            prezzo_notte: results[0].prezzo_notte,
             voto: results[0].voto,
             data_inserimento: results[0].data_inserimento,
             tipologia_id: results[0].tipologia_id,
