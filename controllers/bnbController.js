@@ -167,6 +167,7 @@ const show = (req, res) => {
     const id = req.params.id;
     const sql = `SELECT 
     I.*,
+    P.*,
     R.id AS id_recensione,
     R.username,
     R.testo,
@@ -182,6 +183,10 @@ LEFT JOIN
     recensioni R 
 ON 
     I.id = R.immobile_id
+LEFT JOIN
+    proprietari P
+ON
+P.id = I.proprietario_id
 WHERE 
     I.id = ?;
 `;
@@ -193,7 +198,10 @@ WHERE
 
         const immobileObj = {
             id: results[0].id,
-            proprietaro_id: results[0].proprietaro_id,
+            proprietario_id: results[0].proprietario_id,
+            proprietario_telefono: results[0].telefono,
+            proprietario_email: results[0].email,
+            proprietario_nome: results[0].nome,
             descrizione_immobile: results[0].descrizione_immobile,
             testo_descrittivo: results[0].testo_descrittivo,
             stanze: results[0].stanze,
