@@ -57,15 +57,11 @@ const validateProperty = (data) => {
 
 const validateSearchParams = (query) => {
     const errors = [];
-    if (query.tipologia_id && isNaN(query.tipologia_id))
+    if (query.tipologia && isNaN(query.tipologia))
         errors.push("Tipologia non valida")
-    if (query.voto_min && (isNaN(query.voto_min) || query.voto_min < 0))
-        errors.push("Voto minimo non valido")
-    if (query.stanze_min && (isNaN(query.stanze_min) || query.stanze_min < 0))
+    if (query.stanze && (isNaN(query.stanze) || query.stanze < 0))
         errors.push("Numero minimo di stanze non valido")
-    if (query.letti_min && (isNaN(query.letti_min) || query.letti_min < 0))
-        errors.push("Numero minimo di letti non valido")
-    if (query.bagni_min && (isNaN(query.bagni_min) || query.bagni_min < 0))
+    if (query.bagni && (isNaN(query.bagni) || query.bagni < 0))
         errors.push("Numero minimo di bagno non valido")
 
     return errors
@@ -102,7 +98,7 @@ const tipologieIndex = (req, res) => {
 //-- INDEX FILTRATO--
 
 const filterIndex = (req, res) => {
-    let { tipologia_id, indirizzo, voto_min, stanze_min, bagni_min, letti_min } = req.query;
+    let { tipologia, indirizzo, stanze, bagni } = req.query;
 
     const errors = validateSearchParams(req.query);
     if (errors.length > 0) return res.status(400).json({ error: errors });
@@ -113,9 +109,9 @@ const filterIndex = (req, res) => {
     console.log("Valore di indirizzo ricevuto:", indirizzo);
 
 
-    if (tipologia_id) {
+    if (tipologia) {
         sql += " AND tipologia_id = ? ";
-        params.push(tipologia_id);
+        params.push(tipologia);
     }
     if (indirizzo) {
         sql += `
@@ -126,23 +122,15 @@ const filterIndex = (req, res) => {
             )`;
         params.push(indirizzo, indirizzo, `${indirizzo}%`);
     }
-
-    if (voto_min) {
-        sql += " AND voto >=? "
-        params.push(voto_min);
-    }
-    if (stanze_min) {
+    if (stanze) {
         sql += " AND stanze >= ? ";
-        params.push(stanze_min);
+        params.push(stanze);
     }
-    if (bagni_min) {
+    if (bagni) {
         sql += " AND bagni >= ? ";
-        params.push(bagni_min);
+        params.push(bagni);
     }
-    if (letti_min) {
-        sql += " AND letti >= ? ";
-        params.push(letti_min);
-    }
+
 
     sql += " GROUP BY immobili.id ORDER BY voto DESC";
 
