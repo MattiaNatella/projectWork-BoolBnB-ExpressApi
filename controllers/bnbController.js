@@ -74,7 +74,7 @@ const validateSearchParams = (query) => {
 
 // --INDEX--
 const index = (req, res) => {
-    const sql = "SELECT immobili.*, COUNT(recensioni.id) AS num_recensioni FROM immobili LEFT JOIN recensioni ON immobili.id = recensioni.immobile_id GROUP BY immobili.id ORDER BY voto DESC LIMIT 3;";
+    const sql = "SELECT immobili.*, COUNT(recensioni.id) AS num_recensioni FROM immobili LEFT JOIN recensioni ON immobili.id = recensioni.immobile_id GROUP BY immobili.id ORDER BY voto DESC;";
 
     connection.query(sql, (err, results) => {
         if (err) res.status(500).json({ error: "query al database fallita" });
@@ -116,7 +116,7 @@ const filterIndex = (req, res) => {
     if (tipologia_id) {
         sql += " AND tipologia_id = ? ";
         params.push(tipologia_id);
-    }
+    }   
     if (indirizzo) {
         sql += `
             AND (
