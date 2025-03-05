@@ -155,7 +155,10 @@ const show = (req, res) => {
     const id = req.params.id;
     const sql = `SELECT 
     I.*,
-    P.*,
+    P.id AS proprietario_id,
+    P.telefono AS proprietario_telefono,
+    P.email AS proprietario_email,
+    P.nome AS proprietario_nome,
     R.id AS id_recensione,
     R.username,
     R.testo,
