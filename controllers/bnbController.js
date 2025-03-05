@@ -190,9 +190,9 @@ WHERE
         const immobileObj = {
             id: results[0].id,
             proprietario_id: results[0].proprietario_id,
-            proprietario_telefono: results[0].telefono,
-            proprietario_email: results[0].email,
-            proprietario_nome: results[0].nome,
+            proprietario_telefono: results[0].proprietario_telefono,
+            proprietario_email: results[0].proprietario_email,
+            proprietario_nome: results[0].proprietario_nome,
             descrizione_immobile: results[0].descrizione_immobile,
             testo_descrittivo: results[0].testo_descrittivo,
             stanze: results[0].stanze,
