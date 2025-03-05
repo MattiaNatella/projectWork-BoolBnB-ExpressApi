@@ -264,7 +264,7 @@ const store = (req, res) => {
             })
 
             // inserito il proprietario viene poi inserito l'immobile
-            const SQLinsertImmobile = "INSERT INTO immobili (descrizione_immobile, testo_descrittivo, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, proprietario_id, prezzo_notte) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, LAST_INSERT_ID());"
+            const SQLinsertImmobile = "INSERT INTO immobili (descrizione_immobile, testo_descrittivo, stanze, bagni, letti, metri_quadrati, indirizzo, immagine, tipologia_id, voto, prezzo_notte, proprietario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, LAST_INSERT_ID());"
 
             connection.query(SQLinsertImmobile, [descrizione_immobile, testo_descrittivo, stanze, bagni, letti, metri_quadrati, indirizzo, imageName, tipologia, voto, prezzo_notte], (err) => {
                 if (err) return res.status(500).json({ error: err });
